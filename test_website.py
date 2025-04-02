@@ -15,11 +15,14 @@ def browser(request):
 @pytest.fixture()
 def page(browser: Browser):
     context = browser.new_context()
-    page = context.new_page()
-    page.goto("https://www.whitescreen.online/fake-windows-11-update-screen/"),
-    page.get_by_role("button", name="Consent to all").click()
-    yield page
-    context.close()
+    try:
+        page = context.new_page()
+        page.set_default_timeout(2000)
+        page.goto("https://www.whitescreen.online/fake-windows-11-update-screenn/"),
+        page.get_by_role("button", name="Consent to all").click()
+        yield page
+    finally:
+        context.close()
 
 
 def test_title(page: Page):
@@ -33,10 +36,16 @@ def test_h1_is_visible(page: Page):
     expect(h1).to_be_visible()
     expect(h1).to_contain_text("Windows 11 Fake Update")
 
-
 def test_restart_button_is_visible(page: Page):
     # Ověříme, že tlačítko Restart je viditelné
     restart_button = page.get_by_role("button", name="Restart")
+    # Alternativy tlačítka restart
+        # Pomocí ID
+    # restart_button = page.locator("#update-restart-btn")
+        # Pomocí class
+    # restart_button = page.locator(".download-btn")
+        # Pomocí id i class
+    # restart_button = page.locator(".download-btn#update-restart-btn")
     expect(restart_button).to_be_visible()
 
 
